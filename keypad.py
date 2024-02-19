@@ -12,18 +12,6 @@ class Keypad(tk.Frame):
         self.keynames = keynames
         self.init_components(columns)
 
-    # def make_textbox(self):
-    #     frame = tk.Frame(self)
-    #     text = tk.Text(frame,bg='black', fg='yellow', font=('Arial', 40),width=13, height=1)
-    #     text.insert('1.0', '1')
-    #     # text.insert('1.0', f'{self.display}')
-    #     text.tag_configure("right", justify="right")
-    #     text.tag_add("right", "1.0", "end")
-    #     text.pack(expand=True, fill="both")
-    #     frame.columnconfigure(0, weight=1)
-    #     # print('ok')
-    #     return frame
-
     def init_components(self, columns) -> None:
         """Create a keypad of keys using the keynames list.
         The first keyname is at the top left of the keypad and
@@ -42,7 +30,6 @@ class Keypad(tk.Frame):
             self.grid_columnconfigure(column, weight=1)  # Set weight for each column
 
     def bind(self, todo, event='<Button>'):
-        #TODO
         """Bind an event handler to an event sequence."""
         # Write a bind method with exactly the same parameters
         # as the bind method of Tkinter widgets.
@@ -51,7 +38,7 @@ class Keypad(tk.Frame):
         for button in self.winfo_children():
             button.bind(event, todo, add=None)
 
-    def rebind(self,l_button,todo):
+    def rebind(self, l_button, todo):
         for button in self.winfo_children():
             if button['text'] in l_button:
                 button.unbind("<Button-1>")
@@ -93,19 +80,6 @@ class Keypad(tk.Frame):
         use `keypad.frame.configure()`.
         """
         self.frame.configure(cnf, **kwargs)
-
-
-# if __name__ == '__main__':
-#     keys = list('789456123 0.')  # = ['7','8','9',...]
-#     root = tk.Tk()
-#     root.title("Keypad Demo")
-#     keypad = Keypad(root, keynames=keys, columns=3)
-#     keypad.__setitem__('font', ('Ariel', 20))
-#     keypad['bg'] = 'red'
-#     print(keypad.__getitem__('background'))
-#     keypad.configure(bg='pink')
-#     keypad.pack(expand=True, fill=tk.BOTH)
-#     root.mainloop()
 
 
 

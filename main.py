@@ -2,10 +2,8 @@
 from calculator_ui import CalculatorUI
 import tkinter as tk
 # from tkinter import ttk
+from controller import Controller
 
 if __name__ == '__main__':
-    # root = tk.Tk()
-    # root.geometry("200x274")
-    # root.title("Calculator")
-    ui = CalculatorUI()
-    ui.run()
+    controller = Controller()
+    controller.run()
