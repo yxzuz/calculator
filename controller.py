@@ -23,6 +23,7 @@ class Controller():
         return history_eq
 
     def button_handler(self, event):
+        self.model.remove_blank()
         print(self.model.history)
         txt = event.widget['text']
         # print(self.model.track)
@@ -34,8 +35,8 @@ class Controller():
         elif txt == 'DEL':
             self.view.delete()
             # self.model.unroll.pop()
-            print('t',self.model.track)
-            print('u',self.model.unroll)
+            # print('t',self.model.track)
+            # print('u',self.model.unroll)
 
         elif txt == '=':
             ans = self.model.solve(current_txt)
@@ -44,8 +45,9 @@ class Controller():
                 self.view.set_display(new_txt)  # TODO after get reesult add the eq t histpry
                 equation = self.view.get_current_display()
                 # if self.model.track != 0:
+                #     self.model.unroll.append(self.model.track[0])
                     # self.model.unroll += self.model.track
-                self.model.save_history(equation)
+                self.model.save_history(equation,self.model.unroll)
 
 
             else:
@@ -57,12 +59,17 @@ class Controller():
 
     def notify_model(self,txt):
         # print('button',txt)
-        # new_state = self.model.find_current_state()
-        # self.model.set_state(new_state)
+        self.model.remove_blank()
+        new_state = self.model.find_current_state()
+        # print('n',new_state)
+        self.model.set_state(new_state)
+        # print('s',self.model.state)
         # self.model.unroll.append(txt)
+        # print(676767,txt)
         if txt in CalculatorUI.operators:
             print('notify')
             new_state = self.model.find_current_state()
+            print(new_state)
             self.model.set_state(new_state)
             self.model.unroll.append(txt)
         else:
@@ -82,49 +89,126 @@ class Controller():
 
 
 
+
     def combobox_handler(self, event):
-        #TODO close the paren by itself
+
         button = event.widget['text']
-        new_state = self.model.find_current_state()
-        self.model.set_state(new_state)
-        current = self.view.get_current_display()
-        # print('state2',self.model.state)
-        # print(self.model.track)
-        # print(self.model.unroll)
-        # print(current=='')
-        if current != '':
-            #case1
-            if current[-1] in CalculatorUI.math_fn + CalculatorUI.operators:
-                print('454545454case1')
-                print(button)
-                new_txt = current + f'{button}('
-                self.view.clear_display()
-                self.view.set_display(new_txt)
-                self.model.unroll.append(f'{button}(')
+        floatable_chars = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        current_txt = self.view.box.get("1.0", "end-1c")
+        print(current_txt)
+        if current_txt.endswith(floatable_chars):
+            print('case2')
+            new_state = f'{button}({current_txt})'
+            print(new_state)
+            new_txt = current_txt.replace(current_txt,new_state)
+            self.view.clear_display()
+            self.view.set_display(new_txt)
+        else:
+    #     #case1
+            print('454545454case1')
+            print(button)
+            new_txt = current_txt + f'{button}('
+            self.view.clear_display()
+            self.view.set_display(new_txt)
+            # self.model.unroll.append(f'{button}(')
+            # self.model.unroll[-1] = new_txt
 
 
-            if len(self.model.unroll)>= 3:
-                if self.model.unroll[-2] in CalculatorUI.operators and self.model.state != '':
-                    print('case3')
-                    num = f'{self.model.unroll[len(self.model.unroll)-3]}{self.model.unroll[len(self.model.unroll)-2]}{self.model.state}'
-                    new_state = f'{button}({num})'
-                    self.view.clear_display()
-                    new_txt = current.replace(num,new_state)
-                    self.view.set_display(new_txt)
-                    self.model.set_state(new_state)
 
-            # case 2
-            elif self.model.floatable(self.model.state):
-                print('case2')
-                new_state = f'{button}({self.model.state})'
-                print(new_state)
-                new_txt = current.replace(self.model.state,new_state)
-                self.view.clear_display()
-                self.view.set_display(new_txt)
-                self.model.unroll[-1] = new_txt
-            # print('state2',self.model.state)
-            print(self.model.track,2)
-            print(self.model.unroll,2)
+
+
+        # self.model.remove_blank()
+        # button = event.widget['text']
+        #
+        # new_state = self.model.find_current_state()
+        # self.model.set_state(new_state)
+        # current = self.view.get_current_display()
+        #
+        # if current != '':
+        #     #case1
+        #     if current[-1] in CalculatorUI.math_fn + CalculatorUI.operators:
+        #         print('454545454case1')
+        #         print(button)
+        #         new_txt = current + f'{button}('
+        #         self.view.clear_display()
+        #         self.view.set_display(new_txt)
+        #         self.model.unroll.append(f'{button}(')
+        #
+        #
+        #     if len(self.model.unroll)>= 3:
+        #         if self.model.unroll[-2] in CalculatorUI.operators and self.model.state != '':
+        #             print('case3')
+        #             num = f'{self.model.unroll[len(self.model.unroll)-3]}{self.model.unroll[len(self.model.unroll)-2]}{self.model.state}'
+        #             new_state = f'{button}({num})'
+        #             self.view.clear_display()
+        #             new_txt = current.replace(num,new_state)
+        #             self.view.set_display(new_txt)
+        #             self.model.set_state(new_state)
+        #
+        #     # case 2
+        #     elif self.model.floatable(self.model.state):
+        #         print('case2')
+        #         new_state = f'{button}({self.model.state})'
+        #         print(new_state)
+        #         new_txt = current.replace(self.model.state,new_state)
+        #         self.view.clear_display()
+        #         self.view.set_display(new_txt)
+        #         self.model.unroll[-1] = new_txt
+        #     # print('state2',self.model.state)
+        #     print(self.model.track,2)
+        #     print(self.model.unroll,2)
+
+
+
+
+
+
+
+
+
+    # def combobox_handler(self, event):
+
+    #     self.model.remove_blank()
+    #     button = event.widget['text']
+    #     # if len(self.model.track):
+    #     #     self.model.unroll.append(self.model.unroll[0])
+    #     new_state = self.model.find_current_state()
+    #     self.model.set_state(new_state)
+    #     current = self.view.get_current_display()
+    #
+    #     if current != '':
+    #         #case1
+    #         if current[-1] in CalculatorUI.math_fn + CalculatorUI.operators:
+    #             print('454545454case1')
+    #             print(button)
+    #             new_txt = current + f'{button}('
+    #             self.view.clear_display()
+    #             self.view.set_display(new_txt)
+    #             self.model.unroll.append(f'{button}(')
+    #
+    #
+    #         if len(self.model.unroll)>= 3:
+    #             if self.model.unroll[-2] in CalculatorUI.operators and self.model.state != '':
+    #                 print('case3')
+    #                 num = f'{self.model.unroll[len(self.model.unroll)-3]}{self.model.unroll[len(self.model.unroll)-2]}{self.model.state}'
+    #                 new_state = f'{button}({num})'
+    #                 self.view.clear_display()
+    #                 new_txt = current.replace(num,new_state)
+    #                 self.view.set_display(new_txt)
+    #                 self.model.set_state(new_state)
+    #
+    #         # case 2
+    #         elif self.model.floatable(self.model.state):
+    #             print('case2')
+    #             new_state = f'{button}({self.model.state})'
+    #             print(new_state)
+    #             new_txt = current.replace(self.model.state,new_state)
+    #             self.view.clear_display()
+    #             self.view.set_display(new_txt)
+    #             self.model.unroll[-1] = new_txt
+    #         # print('state2',self.model.state)
+    #         print(self.model.track,2)
+    #         print(self.model.unroll,2)
 
 
 
@@ -191,9 +275,9 @@ class Controller():
     #     return reversed(temp)
 
 
-if __name__ == '__main__':
-    x = Controller()
-    x.run()
+# if __name__ == '__main__':
+#     x = Controller()
+#     x.run()
 
 
 
