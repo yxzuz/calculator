@@ -1,3 +1,3 @@
 # calculator
 
-<img width="839" alt="Screenshot 2567-02-19 at 21 36 06" src="https://github.com/yxzuz/calculator/assets/146909316/e570bd7c-f4ee-4768-83ac-74ed29d85d43">
+<img width="852" alt="cvcvcScreenshot 2567-02-19 at 21 53 09" src="https://github.com/yxzuz/calculator/assets/146909316/1b26db17-03c0-4375-b373-7a3d455fd842">
