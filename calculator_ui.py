@@ -1,12 +1,13 @@
+"""calculator Ui (view in mvc)"""
 from math import *
 import tkinter as tk
 from tkinter import ttk
+from pygame import mixer, time
 from keypad import Keypad
-from pygame import mixer,time
-# from controller import Controller
-#THE VIEW FOR DISPLAY
-#OBSERVER
+
 class CalculatorUI(tk.Tk):
+    """this class is for user's interaction with the program acts as view"""
+
     keys = ['CLR', 'DEL', '%'] + list('7894561230.')
     operators = ['*', '/', '-', '+', '=']
     math_fn = ['(', ')', '**', 'sqrt', 'ln', 'log10', 'log2', 'exp']
@@ -19,6 +20,8 @@ class CalculatorUI(tk.Tk):
         self.init_components()
 
     def create_menubar(self):
+        """initiate menubar for user to view history and quit program"""
+
         # Create a menubar
         menubar = tk.Menu(self)
         self.config(menu=menubar)
@@ -31,10 +34,11 @@ class CalculatorUI(tk.Tk):
         file_menu.add_command(label='History', command=self.history_box)
         file_menu.add_command(label='Exit', command=self.destroy)
 
-    def get_current_display(self):
+    def get_current_display(self) -> str:
         return self.box.get('1.0', 'end').replace('\n', '')
 
     def history_box(self):
+        """initializing history box"""
         eqs = self.controller.show_history()  # Fetch history from the controller
         window2 = tk.Tk()
         window2.geometry('300x200')
@@ -62,13 +66,14 @@ class CalculatorUI(tk.Tk):
         window2.mainloop()
 
     def display_history(self, event):
+        """handler for setting display to user''s choice of equation in history"""
         selected_equation = event.widget.get()
-        print(selected_equation)
-        self.clear_display(event) #TODO
+        self.clear_display(event)
         self.set_display(selected_equation)
 
 
     def play_sound(self):
+        """for error sound effect when user input invalid equation"""
         # Initialize Pygame mixer
         mixer.init()
 
@@ -93,7 +98,8 @@ class CalculatorUI(tk.Tk):
 
         # display
         self.text = tk.StringVar()
-        self.box = tk.Text(self, background='black', fg='yellow', font=('Arial', 40), height=1, width=14)
+        self.box = tk.Text(self, background='black', fg='yellow',
+                           font=('Arial', 40), height=1, width=14)
         self.box.tag_configure('right', justify='right')
         self.box.insert('1.0', '')
         self.box.tag_add("right", 1.0, "end")
@@ -103,8 +109,8 @@ class CalculatorUI(tk.Tk):
 
         keypad.bind(self.controller.button_handler)
 
-        keypad.rebind(['CLR'],self.clear_display) # TODO
-        keypad.rebind('DEL',self.delete) # TODO
+        keypad.rebind(['CLR'],self.clear_display)
+        keypad.rebind('DEL',self.delete)
 
         operators = Keypad(self, CalculatorUI.operators, 1)
 
@@ -127,15 +133,16 @@ class CalculatorUI(tk.Tk):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
 
-    def set_display(self, new_txt):
-        # new_txt = event.widget['text']
+    def set_display(self, new_txt: str):
+        """set user's textbox for display"""
         self.box.config(state="normal")
         self.box.insert('end', new_txt)
 
         self.box.tag_add("right", 1.0, "end")
         self.box.config(state="disabled")
 
-    def clear_display(self,event): # TODO event
+    def clear_display(self, event):
+        """clear button handler"""
         self.box.config(state="normal")
         self.box.delete('1.0', 'end')
         self.box.tag_add("right", 1.0, "end")
@@ -143,19 +150,18 @@ class CalculatorUI(tk.Tk):
         self.box.config(state="disabled")
 
     def error(self):
+        """display when user's equation is invalid"""
         self.box.config(fg='red')
         self.play_sound()
 
-    def delete(self,event):# TODO event
-        # TODO sqaurt delete whole not just t
-
+    def delete(self, event):
+        """delete button handler"""
         current_txt = self.box.get("1.0", "end-1c")
         for math in CalculatorUI.math_fn:
-            if current_txt.endswith(math + '('):
-                new_txt = current_txt.replace(math + '(', '')
-                self.clear_display(event) # TODO
+            if current_txt.endswith(math + '(') or current_txt.endswith(math):
+                new_txt = current_txt[:-len(math)]
+                self.clear_display(event)
                 self.set_display(new_txt)
-
                 return
 
         new_txt = current_txt[: -1]
@@ -163,4 +169,5 @@ class CalculatorUI(tk.Tk):
         self.set_display(new_txt)
 
     def run(self):
+        """running program"""
         self.mainloop()
